@@ -1,0 +1,36 @@
+<html>
+ <head>
+		<title>Video view counter</title>
+		<script src="js/jquery-1.9.0.min.js"></script>
+		<link rel="stylesheet" href="css/bootstrap.css">
+		
+		<script src="js/counter.js"></script>
+  
+  </head>
+
+<body>
+  <div class="container hero-unit">
+  
+	<h3><span>  Video Views Counter </span> <span style="font-size: 14px"> The total hits that videos of a popular search term has on YouTube... </span></h3>	
+	
+		
+			<input type="text" class="input-xlarge" id="vname" placeholder="Enter keywords (E.g. 'Gangnam Style')..."></input>
+			<div><button class="btn btn-small" id="go-btn"> SEARCH </button></div>
+		
+	<br>
+		<div class="row-fluid">
+			<div class="span7" style="border-right: 1px solid #FFF">
+				<div id="info" style="display: none; float: left; margin: 10px; color: #221"><b> Info about top 30 videos:</b>  
+						<div id="contentDiv" style="background: #EFEFEF; margin-top: 10px; color: #444">  </div>
+				</div>
+			</div>
+			<div class="span5">	
+				<div id="viewcount" style="display: none; float: left; margin: 20px; color: #221"><b> Total View Count: </b>
+				<div id="contentDiv2" style="background: #EFEFEF; margin-top: 10px;"> <span id='count' style="font-weight: bold">  </span></div>
+				  </div>
+			</div>		
+		</div>
+ </div>
+</body>
+
+</html>
