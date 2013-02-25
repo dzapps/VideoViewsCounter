@@ -1,9 +1,11 @@
 Video Views Counter
 ==================
 
-- What is this?
+- What's this?
 
-Ever wondered how many views do the videos titled "harlem shake" or "gangnam style" have? Well, now you can! This simple web app does that calculation for you for any keyword that you want to search for. 
+Ever wondered how many total video views an artist like PSY or the videos titled "harlem shake" or "gangnam style" have? Well, now you can! This simple web app does that calculation for you for you and provides a list of the top 30 videos with links to YouTube videos. 
+
+View it in action here:  http://www.yashksagar.com/ViewsCounter/videoviewcounter.html
 
 - How to run?
 
