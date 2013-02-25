@@ -1,36 +1,168 @@
 <html>
  <head>
 		<title>Video view counter</title>
-		<script src="js/jquery-1.9.0.min.js"></script>
-		<link rel="stylesheet" href="css/bootstrap.css">
+		<script src="jquery-1.9.0.min.js"></script>
+		<link rel="stylesheet" href="bootstrap.css">
 		
-		<script src="js/counter.js"></script>
+		<script>
+	
+		 $(document).ready(function(){
+		   
+			$('#go-btn').on('click', go);	
+		    $('#contentDiv','#contentDiv2').text('');
+			$('#contentDiv').children().remove('div');
+			
+		 });
+		 
+		 function go(){
+		
+			var result = '', countresult='';
+			var totalCount = 0;
+			
+			$('#contentDiv','#contentDiv2').text('');
+			$('#contentDiv').children().remove('div');
+			
+			$('#info, #viewcount').css({'display':'block'});
+			
+			  $.ajax({
+			  
+                url:        "http://gdata.youtube.com/feeds/api/videos?q='"+$('#vname').val()+"&alt=json&max-results=30&orderby=viewCount",
+                dataType:   "jsonp",
+                success:    function(data){
+				
+                   					 var result = '', countresult='';
+									 var totalCount = 0;
+									
+									 $('#info','#viewcount').text(' ');
+									 
+									console.log(data.feed);
+									
+								try{	
+									 $.each(data.feed.entry, function(i, item) {
+
+											var title = item['title']['$t'];
+											var video = item['id']['$t'];
+											var viewCount = item['yt$statistics']['viewCount'];
+											var url = item['link'][0]['href'];
+											var thumbnail = item['media$group']['media$thumbnail'][1]['url'];
+											
+								
+											
+											var titlediv = $('<div> </div>');
+											titlediv.html(title);
+											
+											var viewsdiv = $('<div> </div>');											
+											viewsdiv.html(" Views:  "+formatNum(viewCount));
+											
+											var contentdiv = $('<div> </div>');
+											var thumbdiv = $('<div> </div>');
+										
+											var urllink = $('<a href=" '+url+'" ></a>');
+											
+											urllink.html(titlediv);
+											
+											
+											
+											var thumbnaillink = $('<div><img src=" '+thumbnail +' " /> </div>');
+													
+											thumbdiv.html(thumbnaillink);	
+											thumbdiv.css({'float': 'left', 'width': '20%' , 'margin': '10px', });
+											contentdiv.html(urllink);
+											
+											contentdiv.css({'float': 'left', 'width': '70%', 'margin-top':'10px', 'padding': '10px', 'background':'#FFF' });
+											var dividerdiv = $('<div> <hr> </div>');
+											dividerdiv.css({'clear': 'both', 'height':'15px' , 'padding': '10px' });
+											
+											viewsdiv.css({'color':'#555' });
+											
+											$('#contentDiv').append(thumbdiv);
+											$('#contentDiv').append(contentdiv);
+											viewsdiv.insertAfter(urllink);
+											$('#contentDiv').append(dividerdiv);
+										
+											$('#contentDiv').css({'float': 'left' });
+											
+											totalCount += parseInt(viewCount); 
+																	
+										});
+									
+									 // format the count to make it readable
+									totalCount = formatNum(totalCount);	
+									
+									countresult = ' " ' +$('#vname').val() + ' " :  ' + totalCount;
+								
+									$('#contentDiv2 span').text(countresult);
+									$('<span style="float: right;"> &nbsp views </span>').appendTo('#contentDiv2 span');
+												
+									
+								}
+								catch(e){
+									$('#contentDiv').text('Oops! Something went wrong.. Please search again. ' + '\n [ Error: '+ e +"]");
+								}
+								finally{	
+									$('#contentDiv').css({'font-size': '16px', 'font-family':'Georgia', 'line-height': '25px'});
+									$('#contentDiv2 span').css({'font-size': '16px', 'font-family':'Georgia','color': '#2F4F4F'});
+									
+									$('#contentDiv a:link').css({'color':'#2F2F6F'});
+									$('#contentDiv a:hover').css({'color':'#222222'});
+									
+									$('#contentDiv2 span').append($('<hr>'));
+								}	
+							}
+									
+		      });
+		    
+		 } 
+		 
+		  // format the number to make it readable by adding commas
+		 function formatNum(num){
+		 
+		    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		 }
+		 
+		
+		
+		</script>
   
   </head>
 
 <body>
-  <div class="container hero-unit">
+ <div class="navbar-fixed-top">   
+	<div class="navbar-inner" > 
+		<h3 style="color: #888; position: relative; left: 150px; float:left; display: inline"> Video View Counter </h3>   	
+		<h5 style="color: #999; position: relative; left: 180px; float:left; top: 20px"> Ever wondered how many <i>total views</i> an artist or celeb had on YouTube ?  </h3>
+	</div>
+</div>
+
+  <div class="container hero-unit" style ="position: relative; top: 25px;">
   
-	<h3><span>  Video Views Counter </span> <span style="font-size: 14px"> The total hits that videos of a popular search term has on YouTube... </span></h3>	
 	
-		
-			<input type="text" class="input-xlarge" id="vname" placeholder="Enter keywords (E.g. 'Gangnam Style')..."></input>
-			<div><button class="btn btn-small" id="go-btn"> SEARCH </button></div>
-		
+	
+		<input type="text" class="input-xlarge" id="vname" style="width: 320px" placeholder="Enter keywords ( like 'PSY' or 'Harlem Shake')..."></input>
+		<div><button class="btn btn-small" id="go-btn"> SEARCH IT! </button></div>
+	
 	<br>
 		<div class="row-fluid">
 			<div class="span7" style="border-right: 1px solid #FFF">
 				<div id="info" style="display: none; float: left; margin: 10px; color: #221"><b> Info about top 30 videos:</b>  
+						<hr>
 						<div id="contentDiv" style="background: #EFEFEF; margin-top: 10px; color: #444">  </div>
 				</div>
 			</div>
 			<div class="span5">	
-				<div id="viewcount" style="display: none; float: left; margin: 20px; color: #221"><b> Total View Count: </b>
-				<div id="contentDiv2" style="background: #EFEFEF; margin-top: 10px;"> <span id='count' style="font-weight: bold">  </span></div>
-				  </div>
+				<div id="viewcount" style="display: none;  float: left; margin: 20px; color: #221"><b> Total View Count: </b>
+					<div id="contentDiv2" style="background: #EFEFEF; margin-top: 10px; overflow: auto;"> 
+						<span id='count' style=" position: absolute; font-weight: bold; "> 
+						</span>
+					</div>
+				
+				</div>
+				  
 			</div>		
 		</div>
  </div>
+
+ 
 </body>
 
 </html>
