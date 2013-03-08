@@ -11,4 +11,4 @@ View it in action here:  http://www.yashksagar.com/ViewsCounter/videoviewcounter
 
 Place the 'videoviewcounter.html' and the 'js' and 'css' directories in the same path and run the .html in the web browser (preferably one that supports HTML5 :) )
 
-- [ Note: The search results are limited to the top 30 videos to make things simpler and faster.]
+- [ Note: The search results are limited to the top 40 videos to make things simpler and faster.]
