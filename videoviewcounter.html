@@ -3,14 +3,55 @@
 		<title>Video view counter</title>
 		<script src="jquery-1.9.0.min.js"></script>
 		<link rel="stylesheet" href="bootstrap.css">
+		<style>
+			@font-face{
+
+			font-family: Ubuntu-L;
+			src: url('Ubuntu-L.ttf');
+			}
+
+			div, button, p, span{
+			
+				font-family: Ubuntu-L;
+				font-size: 1em;
+			}
+			
+			div input{
+				font-size:1.5em; 
+				padding: 0.43em 0.4em;
+				line-height:1.25em;
+				height: auto;
+			}
+			
+			#videoDiv{
+			 display: none;
+			 position: fixed;
+			 bottom: 5px;
+			 right: 150px
+			}
 		
+			#contentDiv a{
+				text-decoration: none;
+			}
+			
+		</style>
 		<script>
 	
 		 $(document).ready(function(){
-		   
+		    $('body').hide();
+			
+		
+			
 			$('#go-btn').on('click', go);	
+			
 		    $('#contentDiv','#contentDiv2').text('');
 			$('#contentDiv').children().remove('div');
+			
+			$('#contentDiv').on('click', 'a', playVideo);
+			
+			$('body').show('bounce');
+				
+			
 			
 		 });
 		 
@@ -22,11 +63,14 @@
 			$('#contentDiv','#contentDiv2').text('');
 			$('#contentDiv').children().remove('div');
 			
-			$('#info, #viewcount').css({'display':'block'});
+		//	$('#info, #viewcount').css({'display':'block'});
+			$('#info, #viewcount').show('slide');
 			
 			  $.ajax({
 			  
-                url:        "http://gdata.youtube.com/feeds/api/videos?q='"+$('#vname').val()+"&alt=json&max-results=30&orderby=viewCount",
+						// API call- requests the Search term along with parameters like limit results to 40 and order by relevance to search term
+						
+                url:        "http://gdata.youtube.com/feeds/api/videos?q='"+$('#vname').val()+"&alt=json&max-results=40&orderby=relevance",
                 dataType:   "jsonp",
                 success:    function(data){
 				
@@ -57,11 +101,9 @@
 											var contentdiv = $('<div> </div>');
 											var thumbdiv = $('<div> </div>');
 										
-											var urllink = $('<a href=" '+url+'" ></a>');
+											var urllink = $('<a href="'+url+'" ></a>');
 											
 											urllink.html(titlediv);
-											
-											
 											
 											var thumbnaillink = $('<div><img src=" '+thumbnail +' " /> </div>');
 													
@@ -87,11 +129,14 @@
 										});
 									
 									 // format the count to make it readable
-									totalCount = formatNum(totalCount);	
+									//totalCount = formatNum(totalCount);	
 									
-									countresult = ' " ' +$('#vname').val() + ' " :  ' + totalCount;
+									//countresult = ' " ' +$('#vname').val() + ' " :  ' + totalCount;
 								
-									$('#contentDiv2 span').text(countresult);
+									animateCount(totalCount);
+									
+									$('#contentDiv2 span').text(' " ' +$('#vname').val() + ' " :  ' + formatNum(totalCount) + ' views');
+							//		$('#contentDiv2 span').text(countresult);
 									$('<span style="float: right;"> &nbsp views </span>').appendTo('#contentDiv2 span');
 												
 									
@@ -120,6 +165,73 @@
 		    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		 }
 		 
+		 // scrolling effect on the total views 
+		 
+		function animateCount(count){
+		
+			var startval = 1,
+				endval = count,
+				currentval = startval,
+				$counter = $('#contentDiv2 span');
+				
+		    var i =  setInterval(function() {
+				if(currentval >= endval){
+			
+					//clearInterval(i);
+					return;
+						
+				}
+				else{
+			
+					currentval*=2;
+					$counter.text(formatNum(currentval));
+				}
+			}, 50);	
+			
+			
+		}
+		
+			
+			function playVideo(e){
+			
+			 var vidExists=0;
+			 
+			  e.preventDefault();
+			
+			  var video = $("#videoDiv iframe");
+			  
+			// check if another video is already playing
+		
+  			  if(video.attr("src").length > 0){
+				
+				video.attr("src","");
+				
+				$("#videoDiv").fadeOut(600);
+				
+				vidExists = 1;
+			  }
+			  
+			//  var src = new String();
+			  
+			  src = $(this).attr('href');
+		 	
+			//alert('2');
+			 // replace "watch?v=" with "embed/" and remove "&feature=youtube_gdata"
+						 
+			 src = src.replace(/watch\?v=/g, "embed/");
+							 
+			 src = src.replace(/&feature=youtube_gdata/, "");
+			
+			 src += "?autoplay=1";
+			 
+			video.attr("src",src); 
+
+			if(vidExists == 1)		
+				$("#videoDiv").fadeIn(500);
+			else
+			    $("#videoDiv").fadeIn(500);
+			 	
+		   }
 		
 		
 		</script>
@@ -130,7 +242,7 @@
  <div class="navbar-fixed-top">   
 	<div class="navbar-inner" > 
 		<h3 style="color: #888; position: relative; left: 150px; float:left; display: inline"> Video View Counter </h3>   	
-		<h5 style="color: #999; position: relative; left: 180px; float:left; top: 20px"> Ever wondered how many <i>total views</i> an artist or celeb had on YouTube ?  </h3>
+		<h5 style="color: #999; position: relative; left: 180px; float:left; top: 20px"> Ever wondered how many total views an artist or celeb had on YouTube ?  </h3>
 	</div>
 </div>
 
@@ -138,25 +250,39 @@
   
 	
 	
-		<input type="text" class="input-xlarge" id="vname" style="width: 320px" placeholder="Enter keywords ( like 'PSY' or 'Harlem Shake')..."></input>
+		<input type="text" class="input" id="vname" style="width: 320px" placeholder="Enter keywords ( like 'PSY' or 'Harlem Shake')..."></input>
 		<div><button class="btn btn-small" id="go-btn"> SEARCH IT! </button></div>
 	
 	<br>
 		<div class="row-fluid">
 			<div class="span7" style="border-right: 1px solid #FFF">
-				<div id="info" style="display: none; float: left; margin: 10px; color: #221"><b> Info about top 30 videos:</b>  
+				<div id="info" style="display: none; float: left; margin: 10px; color: #221"><b> Info about top 40 videos:</b>  
 						<hr>
 						<div id="contentDiv" style="background: #EFEFEF; margin-top: 10px; color: #444">  </div>
 				</div>
 			</div>
 			<div class="span5">	
-				<div id="viewcount" style="display: none;  float: left; margin: 20px; color: #221"><b> Total View Count: </b>
+			
+				<div id="viewcount" style="display: none;  margin: 20px; color: #221"><b> Total View Count: </b>
 					<div id="contentDiv2" style="background: #EFEFEF; margin-top: 10px; overflow: auto;"> 
-						<span id='count' style=" position: absolute; font-weight: bold; "> 
+						<span id='count' style=" padding: 5px; position: absolute; font-weight: bold; -webkit-border-radius: 10px; border: 1px solid #FFF;"> 
 						</span>
 					</div>
 				
 				</div>
+				  
+				 
+				<div class="container">	 
+					
+					<div id="videoDiv">
+
+					<!-- <video class="youtube-player" type="text/html" width="450" height="350" src="" frameborder="1">
+                     </video> 
+					-->
+					<iframe height="320" width="450" src=""></iframe>
+					
+					</div>
+				</div>		
 				  
 			</div>		
 		</div>
