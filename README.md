@@ -1,5 +1,4 @@
 # Video Views Counter
-==================
 
 ## What's this?
 
